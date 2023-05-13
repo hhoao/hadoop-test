@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  node1:
+    image: kerberos:latest
+    environment:
+      - NODE_NAME=node1
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.2
+    hostname: 'node1'
+  node2:
+    image: kerberos:latest
+    environment:
+      - NODE_NAME=node2
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.3
+    hostname: 'node2'
+networks:
+  nodes:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"

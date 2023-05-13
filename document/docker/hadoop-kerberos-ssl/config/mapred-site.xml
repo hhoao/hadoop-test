@@ -1,0 +1,43 @@
+<!--
+Mapreduce参数
+包括JobHistory Server和应用程序参数两部分，如reduce任务的默认个数、任务所能够使用内存的默认上下限等
+-->
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+        <value>172.16.238.2:10020</value>
+    </property>
+
+    <property>
+        <name>mapreduce.jobhistory.webapp.address</name>
+        <value>172.16.238.2:19888</value>
+    </property>
+
+    <property>
+        <name>mapreduce.jobhistory.keytab</name>
+        <value>/opt/keytab_store/jhs.service.keytab</value>
+    </property>
+
+    <property>
+        <name>mapreduce.jobhistory.principal</name>
+        <value>jhs/_HOST@TEST.COM</value>
+    </property>
+
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=${HADOOP_HOME}</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=${HADOOP_HOME}</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=${HADOOP_HOME}</value>
+    </property>
+</configuration>

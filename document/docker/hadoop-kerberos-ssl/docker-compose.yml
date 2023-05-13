@@ -1,0 +1,105 @@
+version: '3.9'
+
+services:
+  node1:
+    image: hadoop:latest
+    command:
+      - /config.sh
+    ports:
+      # namenode address
+      - "9000:9000"
+      # yarn resourcemanager http address
+      - "8088:8088"
+      # yarn nodemanager
+      - "8042:8042"
+      # yarn resourcemanager address
+      - "8032:8032"
+      # namenode https address
+      - "9865:9865"
+      # datanode https address
+      - "9871:9871"
+      # jobhistory
+      - "19888:19888"
+    environment:
+      - NODE_NAME=node1
+    volumes:
+      - ./config:/config
+      - ./config.sh:/config.sh
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.2
+    hostname: 'node1'
+    extra_hosts:
+      - 'node2:172.16.238.3'
+      - 'node3:172.16.238.4'
+      - 'kdc:172.16.238.5'
+  node2:
+    image: hadoop:latest
+    command:
+      - /config.sh
+    ports:
+      - "8033:8032"
+      - "9001:9000"
+      - "8043:8042"
+      - "8089:8088"
+      - "9866:9865"
+      - "9872:9871"
+    hostname: 'node2'
+    environment:
+      - NODE_NAME=node2
+    volumes:
+      - ./config:/config
+      - ./config.sh:/config.sh
+
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.3
+    extra_hosts:
+      - 'node1:172.16.238.2'
+      - 'node3:172.16.238.4'
+      - 'kdc:172.16.238.5'
+
+  node3:
+    image: hadoop:latest
+    command:
+      - /config.sh
+    ports:
+      - "9003:9000"
+      - "8044:8042"
+      - "9873:9871"
+    environment:
+      - NODE_NAME=node3
+    volumes:
+      - ./config:/config
+      - ./config.sh:/config.sh
+
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.4
+    hostname: node3
+    extra_hosts:
+      - 'node1:172.16.238.2'
+      - 'node2:172.16.238.3'
+      - 'kdc:172.16.238.5'
+  kdc:
+    image: kerberos:latest
+    command:
+      - /config.sh
+    hostname: kdc
+    environment:
+      - NODE_NAME=kdc
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.5
+    volumes:
+      - ./config:/config
+      - ./keytab_store:/opt/keytab_store
+      - ./ssl_store:/opt/ssl_store
+      - ./config.sh:/config.sh
+
+networks:
+  nodes:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"
