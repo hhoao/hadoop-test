@@ -1,0 +1,14 @@
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://node1</value>
+    </property>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/data/hadoop</value>
+    </property>
+    <property>
+        <name>hadoop.security.authentication</name>
+        <value>kerberos</value>
+    </property>
+</configuration>

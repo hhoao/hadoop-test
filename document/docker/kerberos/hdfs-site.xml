@@ -1,0 +1,18 @@
+<configuration>
+<!--    namenode存储表信息的路径-->
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:/data/hadoop/hdfs/name</value>
+    </property>
+<!--    datanode存储实际文件数据块的路径-->
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:/data/hadoop/hdfs/data</value>
+    </property>
+
+<!--    文件副本个数，不超过datanode的个数-->
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+</configuration>

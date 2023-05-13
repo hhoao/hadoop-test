@@ -1,0 +1,93 @@
+version: '3.9'
+
+services:
+  node1:
+    image: hadoop:latest
+    command:
+      - /config.sh
+    ports:
+      # namenode address
+      - 9000:9000
+      # yarn resourcemanager http address
+      - 8088:8088
+      # yarn nodemanager
+      - 8042:8042
+      # yarn resourcemanager address
+      - 8032:8032
+      # namenode http address
+      - 60070:60070
+      # datanode http address
+      - 60075:60075
+      # jobhistory
+      - 19888:19888
+    environment:
+      - NODE_NAME=node1
+    volumes:
+      - ./zoo.cfg:/opt/zookeeper-3.8.1/conf/zoo.cfg
+      - ./config.sh:/config.sh
+      - ./core-site.xml:/opt/hadoop-3.3.5/etc/hadoop/core-site.xml
+      - ./hdfs-site.xml:/opt/hadoop-3.3.5/etc/hadoop/hdfs-site.xml
+      - ./yarn-site.xml:/opt/hadoop-3.3.5/etc/hadoop/yarn-site.xml
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.2
+    hostname: 'node1'
+    extra_hosts:
+      - 'node2:172.16.238.3'
+      - 'node3:172.16.238.4'
+  node2:
+    image: hadoop:latest
+    ports:
+      - 8033:8032
+      - 9001:9000
+      - 8043:8042
+      - 8089:8088
+      - 60071:60070
+      - 60076:60075
+    hostname: 'node2'
+    command:
+      - /config.sh
+    environment:
+      - NODE_NAME=node2
+    volumes:
+      - ./zoo.cfg:/opt/zookeeper-3.8.1/conf/zoo.cfg
+      - ./config.sh:/config.sh
+      - ./core-site.xml:/opt/hadoop-3.3.5/etc/hadoop/core-site.xml
+      - ./hdfs-site.xml:/opt/hadoop-3.3.5/etc/hadoop/hdfs-site.xml
+      - ./yarn-site.xml:/opt/hadoop-3.3.5/etc/hadoop/yarn-site.xml
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.3
+    extra_hosts:
+      - 'node1:172.16.238.2'
+      - 'node3:172.16.238.4'
+
+  node3:
+    image: hadoop:latest
+    ports:
+      - 9003:9000
+      - 8044:8042
+      - 60077:60075
+    command:
+      - /config.sh
+    environment:
+      - NODE_NAME=node3
+    volumes:
+      - ./zoo.cfg:/opt/zookeeper-3.8.1/conf/zoo.cfg
+      - ./config.sh:/config.sh
+      - ./core-site.xml:/opt/hadoop-3.3.5/etc/hadoop/core-site.xml
+      - ./hdfs-site.xml:/opt/hadoop-3.3.5/etc/hadoop/hdfs-site.xml
+      - ./yarn-site.xml:/opt/hadoop-3.3.5/etc/hadoop/yarn-site.xml
+    networks:
+      nodes:
+        ipv4_address: 172.16.238.4
+    hostname: node3
+    extra_hosts:
+      - 'node1:172.16.238.2'
+      - 'node2:172.16.238.3'
+networks:
+  nodes:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"

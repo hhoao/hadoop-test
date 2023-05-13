@@ -1,0 +1,5 @@
+build：构建镜像需要的DockerFile文件及脚本
+
+hadoop-cluster：普通的hadoop集群
+hadoop-kerberos-ssl：开启kerberos+ssl的hadoop集群
+kerberos：测试用的，普通的kerberos服务器
