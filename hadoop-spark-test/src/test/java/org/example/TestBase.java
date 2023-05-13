@@ -96,9 +96,9 @@ public class TestBase {
             LOG.info("you need to copy your spark jars dirs to " + LOCAL_JARS_DIR);
         }
         boolean isHasPackage = Arrays.stream(Objects.requireNonNull(jars.list())).anyMatch((file)
-                -> file.matches("spark-tags_(\\d*|.)*-(\\d|.)*-tests.jar"));
+                -> file.matches("hadoop-common-(\\d*|.)*-tests.jar"));
         if (!isHasPackage) {
-            LOG.error("please upload spark-tags_2.x-3.y.z-tests.jar package");
+            LOG.error("please upload hadoop-common-3.y.z-tests.jar package");
             throw new RuntimeException("please upload spark-tags_2.x-3.y.z-tests.jar package");
         }
         System.setProperty("spark.testing", "true");
