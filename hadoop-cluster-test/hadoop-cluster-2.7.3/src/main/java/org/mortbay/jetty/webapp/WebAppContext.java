@@ -30,7 +30,6 @@ import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionListener;
-import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.HandlerContainer;
 import org.mortbay.jetty.HttpConnection;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.file.Files;
@@ -460,7 +459,7 @@ public class MiniHadoopNoSecurityCluster implements MiniHadoopCluster {
         }
     }
 
-    private String getLocalAddress(int port) throws IOException {
-        return InetAddress.getLocalHost().getHostName() + ":" + port;
+    private String getLocalAddress(int port) {
+        return "127.0.0.1" + ":" + port;
     }
 }
