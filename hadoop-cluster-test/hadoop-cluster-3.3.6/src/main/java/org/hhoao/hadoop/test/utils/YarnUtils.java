@@ -1,11 +1,11 @@
 package org.hhoao.hadoop.test.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
@@ -82,17 +82,28 @@ public class YarnUtils {
             LogCLIHelpers logCliHelper = new LogCLIHelpers();
             logCliHelper.setConf(yarnConfiguration);
             for (int times = 0; times < 20; times++) {
-                Path tempFile = Files.createTempFile("log_agg", "log");
+                Path tempFile = Files.createTempDirectory("log_agg");
                 ContainerLogsRequest containerLogsRequest = new ContainerLogsRequest();
                 containerLogsRequest.setAppId(applicationId);
                 containerLogsRequest.setAppOwner(appOwner);
+                containerLogsRequest.setBytes(Long.MAX_VALUE);
                 containerLogsRequest.setOutputLocalDir(tempFile.toFile().getAbsolutePath());
-                int i = logCliHelper.dumpAllContainersLogs(containerLogsRequest);
-                if (i == -1) {
+                try {
+                    int i = logCliHelper.dumpAllContainersLogs(containerLogsRequest);
+                    if (i == -1) {
+                        TimeUnit.SECONDS.sleep(5);
+                        continue;
+                    }
+                    Iterator<File> fileIterator =
+                            FileUtils.iterateFiles(tempFile.toFile(), null, true);
+                    while (fileIterator.hasNext()) {
+                        Files.copy(fileIterator.next().toPath(), printStream);
+                    }
+                } catch (Exception e) {
+                    LOG.warn(e.getMessage());
                     TimeUnit.SECONDS.sleep(5);
                     continue;
                 }
-                Files.copy(tempFile, printStream);
                 break;
             }
         }
