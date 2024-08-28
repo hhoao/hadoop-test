@@ -12,6 +12,7 @@
     <modules>
         <module>flink</module>
         <module>flink-1.16.2</module>
+        <module>flink-1.20.0</module>
     </modules>
 
     <properties>

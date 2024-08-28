@@ -17,7 +17,7 @@ public class MiniHadoopClusterExtension
     private final boolean enableSecurity;
     private final boolean startHdfsOperator;
     private final String classpath;
-    @Nullable private final Configuration configuration;
+    private final Configuration configuration;
 
     public MiniHadoopClusterExtension() {
         this(false, false, null, null);

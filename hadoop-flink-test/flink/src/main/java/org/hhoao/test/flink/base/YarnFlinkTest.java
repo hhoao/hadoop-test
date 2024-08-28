@@ -1,4 +1,4 @@
-package org.hhoao.test.flink;
+package org.hhoao.test.flink.base;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,6 +118,7 @@ public class YarnFlinkTest {
                     throw new RuntimeException();
             }
         } catch (ClusterDeploymentException e) {
+            LOG.error("", e);
             String appIdStr = configuration.get(HighAvailabilityOptions.HA_CLUSTER_ID);
             String applicationLog = null;
             try {
@@ -145,12 +146,8 @@ public class YarnFlinkTest {
     private void init(
             Configuration configuration, org.apache.hadoop.conf.Configuration hadoopConfiguration)
             throws IOException {
-        for (Map.Entry<String, String> stringStringEntry : hadoopConfiguration) {
-            if (stringStringEntry.getKey().startsWith("yarn.")) {
-                configuration.setString(
-                        "flink." + stringStringEntry.getKey(), stringStringEntry.getValue());
-            }
-        }
+        fillHadoopConfig(configuration, hadoopConfiguration);
+
         setIfAbsent(configuration, YarnConfigOptions.PROVIDED_LIB_DIRS, providedFlinkLibDirs);
         setIfAbsent(
                 configuration, JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse("1024m"));
@@ -184,6 +181,19 @@ public class YarnFlinkTest {
                             return FileVisitResult.CONTINUE;
                         }
                     });
+        }
+    }
+
+    private void fillHadoopConfig(
+            Configuration configuration, org.apache.hadoop.conf.Configuration hadoopConfiguration) {
+        org.apache.hadoop.conf.Configuration defaultConfiguration =
+                new org.apache.hadoop.conf.Configuration();
+        for (Map.Entry<String, String> entry : hadoopConfiguration) {
+            if (!entry.getValue().equals(defaultConfiguration.get(entry.getKey()))) {
+                if (entry.getKey().startsWith("yarn.")) {
+                    configuration.setString("flink." + entry.getKey(), entry.getValue());
+                }
+            }
         }
     }
 
