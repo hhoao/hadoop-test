@@ -27,8 +27,10 @@
     <file url="file://$PROJECT_DIR$/hadoop-hbase-test/hbase-2.5.3/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-hbase-test/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-hbase-test/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hadoop-hive-test/hive-3.1.3/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hadoop-hive-test/hive-3.1.3/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-hive-test/hive-test-3.1.3/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-hive-test/hive-test-3.1.3/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-hive-test/hive-test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-hive-test/hive-test/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-hive-test/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-hive-test/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-hivemetastore-test/src/main/java" charset="UTF-8" />
@@ -61,8 +63,12 @@
     <file url="file://$PROJECT_DIR$/hadoop-test-mapreduce-/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-v371/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-v371/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-test-3.6.3_5.2.0/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-test-3.6.3_5.2.0/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-test-3.7.1_5.5.0/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-test-3.7.1_5.5.0/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-test/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hadoop-zookeeper-test/zookeeper-test/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/study-jaas/src/main/java" charset="UTF-8" />

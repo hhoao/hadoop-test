@@ -19,8 +19,8 @@
     <dependencies>
         <dependency>
             <groupId>org.hhoao.test</groupId>
-            <artifactId>zookeeper-v371</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>hadoop-cluster</artifactId>
+            <version>${hadoop.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>

@@ -18,6 +18,7 @@
         <option value="$PROJECT_DIR$/hadoop-test-core/pom.xml" />
         <option value="$PROJECT_DIR$/hadoop-test-hive/pom.xml" />
         <option value="$PROJECT_DIR$/hadoop-test-mapreduce-/pom.xml" />
+        <option value="$PROJECT_DIR$/hadoop-zookeeper-test/pom.xml" />
       </set>
     </option>
   </component>

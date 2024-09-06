@@ -1,4 +1,4 @@
-package org.example;
+package org.hhoao.test.hive.test;
 
 import com.sun.tools.javac.util.List;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.metastore.api.SerDeInfo;
 import org.apache.hadoop.hive.metastore.api.StorageDescriptor;
@@ -139,8 +138,6 @@ public class HiveWriter {
                         () -> {
                             try {
                                 Configuration configuration = new Configuration();
-                                //                            configuration.set("fs.defaultFS",
-                                // "172.16.21.253:9000");
                                 configuration.set("fs.defaultFS", "172.16.20.255:9000");
                                 Path path =
                                         new Path(
@@ -180,39 +177,12 @@ public class HiveWriter {
                                 }
                                 ExampleParquetWriter.Builder parquetWriterBuilder =
                                         getParquetWriterBuilder(path, configuration, pari);
-                                FileSystem fileSystem = FileSystem.get(configuration);
-                                new Thread(
-                                                () -> {
-                                                    try {
-                                                        for (int j = 0; j < 1000; j++) {
-                                                            ParquetWriter<Group> parquetWriter =
-                                                                    parquetWriterBuilder.build();
-                                                            for (int i = 0; i < 1000; i++) {
-                                                                parquetWriter.write(simpleGroup);
-                                                            }
-                                                            System.out.println(j);
-                                                            parquetWriter.close();
-                                                        }
-                                                    } catch (Exception e) {
-                                                        throw new RuntimeException(e);
-                                                    }
-                                                    System.out.println("down1");
-                                                })
-                                        .start();
-                                //                                new Thread(() -> {
-                                //                                    try {
-                                //                                        for (int i = 0; i <
-                                // 100000; i++) {
-                                //
-                                // parquetWriter1.write(simpleGroup);
-                                //                                        }
-                                //                                        parquetWriter1.close();
-                                //                                    } catch (Exception e) {
-                                //                                        throw new
-                                // RuntimeException(e);
-                                //                                    }
-                                //                                    System.out.println("down2");
-                                //                                }).start();
+
+                                ParquetWriter<Group> parquetWriter = parquetWriterBuilder.build();
+                                for (int i = 0; i < 1000; i++) {
+                                    parquetWriter.write(simpleGroup);
+                                }
+                                parquetWriter.close();
                                 Thread.sleep(1000000);
                             } catch (Exception e) {
                                 throw new RuntimeException(e);

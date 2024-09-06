@@ -7,7 +7,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>hadoop-zookeeper-test</module>
         <module>hadoop-cluster-test</module>
         <module>hadoop-hbase-test</module>
         <module>hadoop-hive-test</module>

@@ -235,8 +235,9 @@ public class GuiceFilter implements Filter {
         try {
             // Destroy all registered filters & servlets in that order
             FilterPipeline filterPipeline = getFilterPipeline();
-            filterPipeline.destroyPipeline();
-
+            if (filterPipeline != null) {
+                filterPipeline.destroyPipeline();
+            }
         } finally {
             reset();
             servletContext.clear();

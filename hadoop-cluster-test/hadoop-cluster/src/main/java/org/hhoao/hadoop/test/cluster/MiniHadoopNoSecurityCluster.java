@@ -316,6 +316,10 @@ public class MiniHadoopNoSecurityCluster implements MiniHadoopCluster {
             configuration.addResource(customConfiguration);
         }
 
+        configuration.set(
+                String.format("hadoop.proxyuser.%s.groups", System.getProperty("user.name")), "*");
+        configuration.set(
+                String.format("hadoop.proxyuser.%s.hosts", System.getProperty("user.name")), "*");
         configuration.setBoolean("fs.hdfs.impl.disable.cache", true);
         configuration.setBoolean(YarnConfiguration.LOG_AGGREGATION_ENABLED, true);
         configuration.setBoolean(YarnConfiguration.IS_MINI_YARN_CLUSTER, true);

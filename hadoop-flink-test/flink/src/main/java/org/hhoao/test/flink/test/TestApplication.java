@@ -14,7 +14,10 @@ import org.apache.flink.streaming.api.environment.ExecutionCheckpointingOptions;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
+import org.hhoao.hadoop.test.api.MiniHadoopCluster;
 import org.hhoao.hadoop.test.cluster.MiniHadoopClusterTestContext;
 import org.hhoao.test.flink.base.ApplicationTestBase;
 import org.hhoao.test.flink.base.YarnFlinkTest;
@@ -90,6 +93,11 @@ public class TestApplication extends ApplicationTestBase {
                     YarnDeploymentTarget.APPLICATION);
             yarnFlinkTests.add(yarnFlinkTest);
         }
+        YarnFlinkTest yarnFlinkTest = yarnFlinkTests.get(0);
+        ApplicationId clusterId = yarnFlinkTest.getClusterClient().getClusterId();
+        MiniHadoopCluster hadoopCluster = getHadoopCluster();
+        YarnClient yarnClient = hadoopCluster.getYarnClient();
+        //        yarnClient.killApplication(clusterId);
         TimeUnit.HOURS.sleep(2);
     }
 }

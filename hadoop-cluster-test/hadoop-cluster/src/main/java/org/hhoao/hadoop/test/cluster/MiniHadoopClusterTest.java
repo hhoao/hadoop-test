@@ -15,6 +15,9 @@ public abstract class MiniHadoopClusterTest {
     public MiniHadoopClusterTest() {
         MiniHadoopClusterTestContext miniHadoopClusterTestContext =
                 getMiniHadoopClusterTestContext();
+        if (miniHadoopClusterTestContext == null) {
+            miniHadoopClusterTestContext = new MiniHadoopClusterTestContext();
+        }
         this.enableSecurity = miniHadoopClusterTestContext.isEnableSecurity();
         this.startHdfsOperator = miniHadoopClusterTestContext.isStartHdfsOperator();
         this.classpath = miniHadoopClusterTestContext.classpath;

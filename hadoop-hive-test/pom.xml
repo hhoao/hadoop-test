@@ -11,6 +11,7 @@
     <artifactId>hadoop-hive-test</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>hive-3.1.3</module>
+        <module>hive-test-3.1.3</module>
+        <module>hive-test</module>
     </modules>
 </project>
