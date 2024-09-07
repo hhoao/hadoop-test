@@ -3,7 +3,6 @@ package org.hhoao.test.hive.base;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,11 +10,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
+import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingCluster;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStore;
 import org.apache.hadoop.hive.metastore.HiveMetaStoreClient;
+import org.apache.hadoop.hive.metastore.ObjectStore;
 import org.apache.hadoop.hive.metastore.api.MetaException;
 import org.apache.hadoop.hive.metastore.conf.MetastoreConf;
 import org.apache.hadoop.hive.metastore.security.HadoopThriftAuthBridge;
@@ -38,7 +39,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HiveTest extends HadoopZookeeperClusterTest {
     private static final Logger LOG = LoggerFactory.getLogger(HiveTest.class);
-    private final File hiveDir = new File(Resources.getTargetDir(), "hive");
+    private final File hiveRootDir = new File(Resources.getTargetDir(), "hive");
+    private final File hiveDir = new File(hiveRootDir, String.valueOf(System.currentTimeMillis()));
     protected HiveConf hiveConf;
     protected HiveMetaStoreClient metaStoreClient;
     protected HiveServer2 hiveServer2;
@@ -69,8 +71,8 @@ public class HiveTest extends HadoopZookeeperClusterTest {
 
     @BeforeEach
     public void startHiveServer()
-            throws InterruptedException, MalformedURLException, SQLException,
-                    ClassNotFoundException, MetaException {
+            throws InterruptedException, IOException, SQLException, ClassNotFoundException,
+                    MetaException {
         initDir();
         TestingCluster testingServer = getZookeeperCluster();
 
@@ -112,34 +114,32 @@ public class HiveTest extends HadoopZookeeperClusterTest {
         }
     }
 
-    private void startHiveMetaStore() throws InterruptedException {
+    private void startHiveMetaStore() throws InterruptedException, MetaException {
         ReentrantLock reentrantLock = new ReentrantLock();
-        AtomicBoolean startedServing = new AtomicBoolean();
+        AtomicBoolean startedServing = new AtomicBoolean(false);
+        Thread thread = Thread.currentThread();
         CompletableFuture.runAsync(
                 () -> {
                     try {
                         HiveMetaStore.startMetaStore(
-                                (Integer) MetastoreConf.ConfVars.SERVER_PORT.getDefaultVal(),
+                                ((Long) MetastoreConf.ConfVars.SERVER_PORT.getDefaultVal())
+                                        .intValue(),
                                 HadoopThriftAuthBridge.getBridge(),
                                 hiveConf,
                                 reentrantLock,
                                 reentrantLock.newCondition(),
-                                new AtomicBoolean());
+                                startedServing);
                     } catch (Throwable e) {
-                        throw new RuntimeException(e);
+                        thread.getUncaughtExceptionHandler().uncaughtException(thread, e);
+                        thread.interrupt();
                     }
                 });
 
-        boolean isStart = false;
-        while (!isStart) {
-            try {
-                metaStoreClient = new HiveMetaStoreClient(hiveConf);
-                isStart = true;
-            } catch (MetaException e) {
-                LOG.info("Wait for HiveMetaStore complete start");
-                TimeUnit.SECONDS.sleep(1);
-            }
+        while (!startedServing.get()) {
+            LOG.info("Wait for HiveMetaStore complete start");
+            TimeUnit.SECONDS.sleep(1);
         }
+        metaStoreClient = new HiveMetaStoreClient(hiveConf);
     }
 
     private HiveConf createHiveConf(TestingCluster testingServer) {
@@ -149,6 +149,7 @@ public class HiveTest extends HadoopZookeeperClusterTest {
         hiveConf.setVar(HiveConf.ConfVars.HIVE_ZOOKEEPER_QUORUM, testingServer.getConnectString());
         hiveConf.setBoolVar(HiveConf.ConfVars.HIVE_IN_TEST, Boolean.TRUE);
         hiveConf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_PORT, 20203);
+        ObjectStore.setTwoMetastoreTesting(true);
         hiveConf.set(PropertyNames.PROPERTY_SCHEMA_AUTOCREATE_TABLES, "true");
         MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.SCHEMA_VERIFICATION, false);
         MetastoreConf.setVar(
@@ -161,7 +162,10 @@ public class HiveTest extends HadoopZookeeperClusterTest {
         return hiveConf;
     }
 
-    private void initDir() {
+    private void initDir() throws IOException {
+        if (hiveRootDir.exists()) {
+            FileUtils.forceDelete(hiveRootDir);
+        }
         hiveDir.mkdirs();
     }
 
