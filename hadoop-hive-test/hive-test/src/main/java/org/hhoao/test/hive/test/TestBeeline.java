@@ -27,7 +27,7 @@ public class TestBeeline extends HiveTest {
     }
 
     @Test
-    void test() throws IOException, InterruptedException {
+    void test() {
         changeLogger();
         String url = getUrl();
         UserGroupInformation w = UserGroupInformation.createRemoteUser("w");
@@ -45,7 +45,8 @@ public class TestBeeline extends HiveTest {
     }
 
     private void changeLogger() {
-        Configurator.setRootLevel(Level.ERROR);
-        ;
+        Configurator.setRootLevel(Level.OFF);
+        org.apache.log4j.Logger rootLogger = org.apache.log4j.Logger.getRootLogger();
+        rootLogger.setLevel(org.apache.log4j.Level.OFF);
     }
 }
