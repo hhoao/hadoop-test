@@ -143,22 +143,23 @@ public class HiveTest extends HadoopZookeeperClusterTest {
     }
 
     private HiveConf createHiveConf(TestingCluster testingServer) {
+        ObjectStore.setTwoMetastoreTesting(true);
+
         HiveConf hiveConf = new HiveConf();
         Configuration config = getHadoopCluster().getConfig();
         hiveConf.addResource(config);
         hiveConf.setVar(HiveConf.ConfVars.HIVE_ZOOKEEPER_QUORUM, testingServer.getConnectString());
         hiveConf.setBoolVar(HiveConf.ConfVars.HIVE_IN_TEST, Boolean.TRUE);
         hiveConf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_PORT, 20203);
-        ObjectStore.setTwoMetastoreTesting(true);
         hiveConf.set(PropertyNames.PROPERTY_SCHEMA_AUTOCREATE_TABLES, "true");
+        hiveConf.set("hive.metastore.schema.verification", "false");
         MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.SCHEMA_VERIFICATION, false);
         MetastoreConf.setVar(
                 hiveConf,
                 MetastoreConf.ConfVars.CONNECT_URL_KEY,
-                String.format(
-                        "jdbc:derby:;databaseName=%s;create=true",
-                        new File(hiveDir, "metastore_db").getAbsolutePath()));
+                String.format("jdbc:derby:;databaseName=%s;create=true", "metastore_db"));
         MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.AUTO_CREATE_ALL, true);
+
         return hiveConf;
     }
 
