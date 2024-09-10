@@ -10,9 +10,10 @@
     <artifactId>hadoop-flink-test</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>flink</module>
-        <module>flink-1.16.2</module>
-        <module>flink-1.20.0</module>
+        <module>flink-test</module>
+        <module>flink-test-1.16.2</module>
+        <module>flink-test-1.20.0</module>
+        <module>flink-test-hive</module>
     </modules>
 
     <properties>
@@ -20,4 +21,21 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <profiles>
+        <profile>
+            <id>flink-1.20.0</id>
+            <properties>
+                <flink.version>1.20.0</flink.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>flink-1.16.2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <flink.version>1.16.2</flink.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>

@@ -44,7 +44,7 @@ public class HiveTest extends HadoopZookeeperClusterTest {
     protected HiveMetaStoreClient metaStoreClient;
     protected HiveServer2 hiveServer2;
     private Connection connection;
-    private String url;
+    protected String url;
 
     public HiveMetaStoreClient getMetaStoreClient() {
         return metaStoreClient;

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+       <name>hive.strict.managed.tables</name>
+       <value>false</value>
+</property>
+<property>
+       <name>hive.create.as.insert.only</name>
+       <value>true</value>
+</property>
+<property>
+       <name>metastore.create.as.acid</name>
+       <value>true</value>
+</property>   
+<property>
+       <name>javax.jdo.option.ConnectionURL</name>
+       <value>jdbc:mysql://172.16.21.107:3306/metastore?createDatabaseIfNotExist=true&amp;useSSL=false&amp;autoReconnect=true</value>
+   </property>
+
+   <property>
+         <name>hive.cluster.delegation.token.store.class</name>
+         <value>org.apache.hadoop.hive.thrift.MemoryTokenStore</value>
+         <description>Hive defaults to MemoryTokenStore, or ZooKeeperTokenStore</description>
+   </property>
+
+   <property>
+       <name>javax.jdo.option.ConnectionDriverName</name>
+       <value>com.mysql.jdbc.Driver</value>
+   </property>
+
+   <property>
+       <name>javax.jdo.option.ConnectionUserName</name>
+       <value>drpeco</value>
+   </property>
+
+   <property>
+       <name>javax.jdo.option.ConnectionPassword</name>
+       <value>DT@Stack#123</value>
+   </property>
+
+   <property>
+       <name>hive.metastore.warehouse.dir</name>
+       <value>/dtInsight/hive/warehouse</value>
+   </property>
+
+   <property>
+       <name>hive.exec.scratchdir</name>
+       <value>/dtInsight/hive/warehouse</value>
+   </property>
+
+    <property>
+       <name>hive.reloadable.aux.jars.path</name>
+       <value>/dtInsight/hive/udf</value>
+    </property>
+
+   <property>
+       <name>datanucleus.schema.autoCreateAll</name>
+       <value>true</value>
+       <description>creates necessary schema on a startup if one doesn't exist. set this to false, after creating it once</description>
+   </property>
+
+   <property>
+       <name>hive.metastore.schema.verification</name>
+       <value>false</value>
+   </property>
+
+   <property>
+       <name>hive.exec.dynamic.partition</name>
+       <value>true</value>
+   </property>
+
+   <property>
+       <name>hive.exec.dynamic.partition.mode</name>
+       <value>nonstrict</value>
+   </property>
+    <property>
+         <name>hive.server2.thrift.port</name>
+         <value>10004</value>
+    </property>
+
+    <property>
+        <name>hive.server2.webui.host</name>
+        <value>0.0.0.0</value>
+    </property>
+
+    <property>
+        <name>hive.server2.webui.port</name>
+        <value>10002</value>
+    </property>
+
+  <property>
+     <name>hive.server2.support.dynamic.service.discovery</name>
+     <value>true</value>
+  </property>
+
+
+
+  <property>
+     <name>hive.zookeeper.quorum</name>
+     <value>hadoop01:2181,hadoop02:2181,hadoop03:2181</value>
+  </property>
+
+   <property>
+       <name>hive.server2.thrift.min.worker.threads</name>
+       <value>300</value>
+   </property>
+
+   <property>
+       <name>hive.server2.async.exec.threads</name>
+       <value>200</value>
+   </property>
+
+   <property>
+       <name>hive.server2.idle.session.timeout</name>
+       <value>3600000</value>
+   </property>
+
+   <property>
+       <name>hive.server2.session.check.interval</name>
+       <value>60000</value>
+   </property>
+
+   <property>
+       <name>hive.server2.enable.doAs</name>
+       <value>true</value>
+   </property>
+
+
+
+
+
+
+
+
+
+    <property>
+        <name>hive.merge.mapfile</name>
+        <value>true</value>
+    </property>
+
+
+    <property>
+        <name>hive.merge.size.per.task</name>
+        <value>256000000</value>
+    </property>
+
+    <property>
+        <name>hive.mapjoin.localtask.max.memory.usage</name>
+        <value>0.9</value>
+    </property>
+    <property>
+        <name>hive.mapjoin.smalltable.filesize</name>
+        <value>25000000L</value>
+    </property>
+    <property>
+        <name>hive.mapjoin.followby.gby.localtask.max.memory.usage</name>
+        <value>0.55</value>
+    </property>
+    <property>
+        <name>hive.merge.mapredfiles</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.exec.max.dynamic.partitions.pernode</name>
+        <value>100</value>
+    </property>
+    <property>
+        <name>hive.exec.max.dynamic.partitions</name>
+        <value>1000</value>
+    </property>
+    <property>
+        <name>hive.metastore.server.max.threads</name>
+        <value>100000</value>
+    </property>
+    <property>
+        <name>hive.metastore.server.min.threads</name>
+        <value>200</value>
+    </property>
+    <property>
+        <name>mapred.reduce.tasks</name>
+        <value>-1</value>
+    </property>
+    <property>
+        <name>hive.exec.reducers.bytes.per.reducer</name>
+        <value>64000000</value>
+    </property>
+    <property>
+        <name>hive.exec.reducers.max</name>
+        <value>1099</value>
+    </property>
+    <property>
+        <name>hive.auto.convert.join</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.auto.convert.join.noconditionaltask.size</name>
+        <value>20000000</value>
+    </property>
+
+    <property>
+        <name>spark.executor.cores</name>
+        <value>4</value>
+    </property>
+
+    <property>
+        <name>spark.executor.memory</name>
+        <value>456340275B</value>
+    </property>
+
+    <property>
+        <name>spark.driver.memory</name>
+        <value>966367641B</value>
+    </property>
+
+    <property>
+        <name>spark.yarn.driver.memoryOverhead</name>
+        <value>102000000</value>
+    </property>
+
+    <property>
+        <name>spark.yarn.executor.memoryOverhead</name>
+        <value>76000000</value>
+    </property>
+    <property>
+        <name>hive.map.aggr</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.map.aggr.hash.percentmemory</name>
+        <value>0.5</value>
+    </property>
+
+    <property>
+        <name>hive.merge.sparkfiles</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.merge.smallfiles.avgsize</name>
+        <value>16000000</value>
+    </property>
+    <property>
+        <name>hive.fetch.task.conversion</name>
+        <value>minimal</value>
+    </property>
+
+    <property>
+        <name>hive.fetch.task.conversion.threshold</name>
+        <value>32000000</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.client.socket.timeout</name>
+        <value>600s</value>
+    </property>
+
+    <property>
+        <name>hive.server2.idle.operation.timeout</name>
+        <value>6h</value>
+    </property>
+
+    <property>
+        <name>hive.server2.idle.session.timeout</name>
+        <value>3600000</value>
+    </property>
+    <property>
+        <name>hive.server2.idle.session.check.operation</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.webui.max.threads</name>
+        <value>50</value>
+    </property>
+    <property>
+        <name>hive.metastore.connect.retries</name>
+        <value>10</value>
+    </property>
+
+    <property>
+        <name>hive.warehouse.subdir.inherit.perms</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+
+    <property>
+        <name>hive.stats.autogather</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.security.authorization.sqlstd.confwhitelist.append</name>
+        <value>mapred.*|hive.*|mapreduce.*|spark.*|tez.*</value>
+    </property>
+    <property>
+        <name>hive.security.authorization.sqlstd.confwhitelist</name>
+        <value>mapred.*|hive.*|mapreduce.*|spark.*|tez.*</value>
+    </property>
+
+
+<!--    <property>-->
+<!--        <name>hive.server2.active.passive.ha.enable</name>-->
+<!--        <value>true</value>-->
+<!--    </property>-->
+
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+    <property>
+        <name>hive.cbo.enable</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.vectorized.execution.enabled</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://hadoop02:9083,thrift://hadoop03:9083</value>
+        <description>A comma separated list of metastore uris on which metastore service is running</description>
+    </property>
+
+
+    <!-- hive开启kerberos -->
+
+    
+
+       <!-- hive单独开启Ldap -->
+
+    
+</configuration>
