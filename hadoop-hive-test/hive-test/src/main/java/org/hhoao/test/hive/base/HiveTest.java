@@ -10,16 +10,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
-import org.apache.commons.io.FileUtils;
 import org.apache.curator.test.TestingCluster;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStore;
 import org.apache.hadoop.hive.metastore.HiveMetaStoreClient;
-import org.apache.hadoop.hive.metastore.ObjectStore;
 import org.apache.hadoop.hive.metastore.api.MetaException;
 import org.apache.hadoop.hive.metastore.conf.MetastoreConf;
 import org.apache.hadoop.hive.metastore.security.HadoopThriftAuthBridge;
+import org.apache.hadoop.net.NetUtils;
 import org.apache.hive.service.Service;
 import org.apache.hive.service.server.HiveServer2;
 import org.datanucleus.PropertyNames;
@@ -122,8 +121,8 @@ public class HiveTest extends HadoopZookeeperClusterTest {
                 () -> {
                     try {
                         HiveMetaStore.startMetaStore(
-                                ((Long) MetastoreConf.ConfVars.SERVER_PORT.getDefaultVal())
-                                        .intValue(),
+                                MetastoreConf.getIntVar(
+                                        hiveConf, MetastoreConf.ConfVars.SERVER_PORT),
                                 HadoopThriftAuthBridge.getBridge(),
                                 hiveConf,
                                 reentrantLock,
@@ -143,11 +142,16 @@ public class HiveTest extends HadoopZookeeperClusterTest {
     }
 
     private HiveConf createHiveConf(TestingCluster testingServer) {
-        ObjectStore.setTwoMetastoreTesting(true);
-
         HiveConf hiveConf = new HiveConf();
         Configuration config = getHadoopCluster().getConfig();
         hiveConf.addResource(config);
+
+        int freeSocketPort = NetUtils.getFreeSocketPort();
+        MetastoreConf.setLongVar(hiveConf, MetastoreConf.ConfVars.SERVER_PORT, freeSocketPort);
+        MetastoreConf.setVar(
+                hiveConf,
+                MetastoreConf.ConfVars.THRIFT_URIS,
+                "thrift://localhost:" + freeSocketPort);
         hiveConf.setVar(HiveConf.ConfVars.HIVE_ZOOKEEPER_QUORUM, testingServer.getConnectString());
         hiveConf.setBoolVar(HiveConf.ConfVars.HIVE_IN_TEST, Boolean.TRUE);
         hiveConf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_PORT, 20203);
@@ -164,9 +168,6 @@ public class HiveTest extends HadoopZookeeperClusterTest {
     }
 
     private void initDir() throws IOException {
-        if (hiveRootDir.exists()) {
-            FileUtils.forceDelete(hiveRootDir);
-        }
         hiveDir.mkdirs();
     }
 
