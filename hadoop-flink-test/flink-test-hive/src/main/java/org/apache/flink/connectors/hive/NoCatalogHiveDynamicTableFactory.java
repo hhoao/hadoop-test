@@ -42,10 +42,16 @@ import org.apache.flink.table.factories.DynamicTableSinkFactory;
 import org.apache.flink.table.factories.DynamicTableSourceFactory;
 import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.util.Preconditions;
+import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
+import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.conf.MetastoreConf;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.hhoao.hadoop.test.security.KerberosSecurityOperator;
+import org.hhoao.hadoop.test.security.NoSecurityOperator;
+import org.hhoao.hadoop.test.security.SecurityOperator;
 
 /** A dynamic table factory implementation for Hive. */
 public class NoCatalogHiveDynamicTableFactory extends FileSystemTableFactory
@@ -96,6 +102,9 @@ public class NoCatalogHiveDynamicTableFactory extends FileSystemTableFactory
                                 HiveOptions.STREAMING_SOURCE_MONITOR_INTERVAL,
                                 NoCatalogHiveOptions.CATALOG,
                                 NoCatalogHiveOptions.PROPERTIES,
+                                NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL,
+                                NoCatalogHiveOptions.SECURITY_KERBEROS_KEYTAB,
+                                NoCatalogHiveOptions.SECURITY_KERBEROS_KRB5_CONF,
                                 HiveCatalogFactoryOptions.HIVE_VERSION)
                         .collect(Collectors.toCollection(HashSet::new)));
         return optionalOptions;
@@ -110,16 +119,31 @@ public class NoCatalogHiveDynamicTableFactory extends FileSystemTableFactory
                 Configuration.fromMap(context.getCatalogTable().getOptions())
                         .get(FileSystemConnectorOptions.SINK_PARALLELISM);
 
+        ReadableConfig options = tableFactoryHelper.getOptions();
         HiveConf hiveConf = createHiveConf(tableFactoryHelper.getOptions());
-        final JobConf jobConf = JobConfUtils.createJobConfWithCredentials(hiveConf);
+        JobConf jobConf = new JobConf(hiveConf);
+
         ObjectIdentifier objectIdentifier = createObjectIdentifier(tableFactoryHelper.getOptions());
+        SecurityOperator kerberosSecurityOperator = getSecurityOperator(options);
 
         return new HiveTableSink(
                 context.getConfiguration(),
                 jobConf,
                 objectIdentifier,
                 context.getCatalogTable(),
-                configuredSinkParallelism);
+                configuredSinkParallelism,
+                kerberosSecurityOperator);
+    }
+
+    private static SecurityOperator getSecurityOperator(ReadableConfig options) {
+        if (options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL) != null) {
+            String keytab = options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_KEYTAB);
+            String principal = options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL);
+
+            return new KerberosSecurityOperator(principal, keytab);
+        } else {
+            return new NoSecurityOperator();
+        }
     }
 
     private ObjectIdentifier createObjectIdentifier(ReadableConfig options) {
@@ -142,6 +166,17 @@ public class NoCatalogHiveDynamicTableFactory extends FileSystemTableFactory
         hiveConf.set(
                 HiveCatalogFactoryOptions.HIVE_VERSION.key(),
                 options.get(HiveCatalogFactoryOptions.HIVE_VERSION));
+
+        if (options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL) != null) {
+            String principal = options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL);
+            MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.USE_THRIFT_SASL, true);
+            hiveConf.set(
+                    CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTHENTICATION,
+                    UserGroupInformation.AuthenticationMethod.KERBEROS.name());
+            MetastoreConf.setVar(hiveConf, MetastoreConf.ConfVars.KERBEROS_PRINCIPAL, principal);
+            hiveConf.set(DFSConfigKeys.DFS_NAMENODE_KERBEROS_PRINCIPAL_KEY, principal);
+        }
+
         Map<String, String> properties = options.get(NoCatalogHiveOptions.PROPERTIES);
         properties.forEach(hiveConf::set);
         return hiveConf;

@@ -24,6 +24,8 @@ public interface MiniHadoopCluster extends Closeable {
      */
     FileSystem getFileSystem();
 
+    SecurityContext getSecurityContext();
+
     /**
      * Gets dfs cluster.
      *

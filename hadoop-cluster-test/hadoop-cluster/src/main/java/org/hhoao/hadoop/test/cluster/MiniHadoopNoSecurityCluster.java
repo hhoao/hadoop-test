@@ -35,6 +35,7 @@ import org.apache.hadoop.yarn.server.nodemanager.NodeManager;
 import org.apache.hadoop.yarn.server.resourcemanager.ResourceManager;
 import org.apache.hadoop.yarn.webapp.util.WebAppUtils;
 import org.hhoao.hadoop.test.api.MiniHadoopCluster;
+import org.hhoao.hadoop.test.api.SecurityContext;
 import org.hhoao.hadoop.test.utils.ClassLoaderUtils;
 import org.hhoao.hadoop.test.utils.HdfsOperator;
 import org.hhoao.hadoop.test.utils.JarUtils;
@@ -76,6 +77,11 @@ public class MiniHadoopNoSecurityCluster implements MiniHadoopCluster {
     @Override
     public FileSystem getFileSystem() {
         return fileSystem;
+    }
+
+    @Override
+    public SecurityContext getSecurityContext() {
+        return new NoSecurityContext();
     }
 
     @Override

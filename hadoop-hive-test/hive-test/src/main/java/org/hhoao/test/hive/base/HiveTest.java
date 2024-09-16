@@ -3,15 +3,18 @@ package org.hhoao.test.hive.base;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.curator.test.TestingCluster;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.HiveMetaStore;
 import org.apache.hadoop.hive.metastore.HiveMetaStoreClient;
@@ -19,10 +22,12 @@ import org.apache.hadoop.hive.metastore.api.MetaException;
 import org.apache.hadoop.hive.metastore.conf.MetastoreConf;
 import org.apache.hadoop.hive.metastore.security.HadoopThriftAuthBridge;
 import org.apache.hadoop.net.NetUtils;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hive.service.Service;
 import org.apache.hive.service.server.HiveServer2;
 import org.datanucleus.PropertyNames;
-import org.hhoao.hadoop.test.cluster.MiniHadoopClusterTestContext;
+import org.hhoao.hadoop.test.api.MiniHadoopCluster;
+import org.hhoao.hadoop.test.api.SecurityContext;
 import org.hhoao.hadoop.test.cluster.zookeeper.HadoopZookeeperClusterTest;
 import org.hhoao.hadoop.test.utils.Resources;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author xianxing
  * @since 2024/9/5
  */
-public class HiveTest extends HadoopZookeeperClusterTest {
+public abstract class HiveTest extends HadoopZookeeperClusterTest {
     private static final Logger LOG = LoggerFactory.getLogger(HiveTest.class);
     private final File hiveRootDir = new File(Resources.getTargetDir(), "hive");
     private final File hiveDir = new File(hiveRootDir, String.valueOf(System.currentTimeMillis()));
@@ -59,36 +64,44 @@ public class HiveTest extends HadoopZookeeperClusterTest {
     }
 
     @Override
-    protected MiniHadoopClusterTestContext getMiniHadoopClusterTestContext() {
-        return new MiniHadoopClusterTestContext();
-    }
-
-    @Override
     public int getZookeeperClusterCount() {
         return 3;
     }
 
     @BeforeEach
-    public void startHiveServer()
-            throws InterruptedException, IOException, SQLException, ClassNotFoundException,
-                    MetaException {
-        initDir();
-        TestingCluster testingServer = getZookeeperCluster();
+    public void startHiveServer() throws IOException {
+        SecurityContext securityContext = getHadoopCluster().getSecurityContext();
+        UserGroupInformation ugi =
+                UserGroupInformation.loginUserFromKeytabAndReturnUGI(
+                        securityContext.getDefaultPrincipal(),
+                        securityContext.getDefaultKeytab().getAbsolutePath());
+        ugi.doAs(
+                (PrivilegedAction<?>)
+                        () -> {
+                            try {
+                                initDir();
+                                TestingCluster testingServer = getZookeeperCluster();
 
-        System.setProperty("derby.system.home", hiveDir.getAbsolutePath());
-        hiveConf = createHiveConf(testingServer);
+                                System.setProperty("derby.system.home", hiveDir.getAbsolutePath());
+                                hiveConf = createHiveConf(testingServer);
 
-        writeConfig(hiveConf, "hive-site.xml");
-        HiveConf.setHiveSiteLocation(new File(hiveDir, "hive-site.xml").toURI().toURL());
+                                writeConfig(hiveConf, "hive-site.xml");
+                                HiveConf.setHiveSiteLocation(
+                                        new File(hiveDir, "hive-site.xml").toURI().toURL());
 
-        startHiveMetaStore();
+                                startHiveMetaStore();
 
-        metaStoreClient = new HiveMetaStoreClient(hiveConf);
-        startHiveServer2();
+                                metaStoreClient = new HiveMetaStoreClient(hiveConf);
+                                startHiveServer2();
 
-        connection = createConnection();
+                                connection = createConnection();
 
-        LOG.info("Hive start successful!");
+                                LOG.info("Hive start successful!");
+                                return null;
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
     }
 
     private Connection createConnection() throws ClassNotFoundException, SQLException {
@@ -100,7 +113,7 @@ public class HiveTest extends HadoopZookeeperClusterTest {
                 String.format("jdbc:hive2://localhost:%s/default", port), user, "");
     }
 
-    private void startHiveServer2() throws InterruptedException {
+    private void startHiveServer2() throws IOException {
         hiveServer2 = new HiveServer2();
         hiveServer2.init(hiveConf);
         hiveServer2.start();
@@ -108,7 +121,11 @@ public class HiveTest extends HadoopZookeeperClusterTest {
 
         while (serviceState.compareTo(Service.STATE.STARTED) != 0) {
             LOG.info("HiveServer2 current state is {}, waiting...", serviceState);
-            TimeUnit.SECONDS.sleep(1);
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             serviceState = hiveServer2.getServiceState();
         }
     }
@@ -128,6 +145,7 @@ public class HiveTest extends HadoopZookeeperClusterTest {
                                 reentrantLock,
                                 reentrantLock.newCondition(),
                                 startedServing);
+
                     } catch (Throwable e) {
                         thread.getUncaughtExceptionHandler().uncaughtException(thread, e);
                         thread.interrupt();
@@ -156,13 +174,42 @@ public class HiveTest extends HadoopZookeeperClusterTest {
         hiveConf.setBoolVar(HiveConf.ConfVars.HIVE_IN_TEST, Boolean.TRUE);
         hiveConf.setIntVar(HiveConf.ConfVars.HIVE_SERVER2_THRIFT_PORT, 20203);
         hiveConf.set(PropertyNames.PROPERTY_SCHEMA_AUTOCREATE_TABLES, "true");
-        hiveConf.set("hive.metastore.schema.verification", "false");
+        hiveConf.setBoolVar(HiveConf.ConfVars.METASTORE_SCHEMA_VERIFICATION, false);
         MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.SCHEMA_VERIFICATION, false);
         MetastoreConf.setVar(
                 hiveConf,
                 MetastoreConf.ConfVars.CONNECT_URL_KEY,
                 String.format("jdbc:derby:;databaseName=%s;create=true", "metastore_db"));
         MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.AUTO_CREATE_ALL, true);
+        MiniHadoopCluster hadoopCluster = getHadoopCluster();
+        SecurityContext securityContext = hadoopCluster.getSecurityContext();
+        if (securityContext != null) {
+            Map<String, File> principalKeytabMap = securityContext.getPrincipalKeytabMap();
+            principalKeytabMap.forEach(
+                    (principal, keytab) -> {
+                        MetastoreConf.setBoolVar(
+                                hiveConf, MetastoreConf.ConfVars.USE_THRIFT_SASL, true);
+                        MetastoreConf.setVar(
+                                hiveConf,
+                                MetastoreConf.ConfVars.CLIENT_KERBEROS_PRINCIPAL,
+                                principal);
+                        MetastoreConf.setVar(
+                                hiveConf, MetastoreConf.ConfVars.KERBEROS_PRINCIPAL, principal);
+                        MetastoreConf.setVar(
+                                hiveConf,
+                                MetastoreConf.ConfVars.KERBEROS_KEYTAB_FILE,
+                                keytab.getAbsolutePath());
+
+                        hiveConf.setVar(
+                                HiveConf.ConfVars.HIVE_SERVER2_KERBEROS_KEYTAB,
+                                keytab.getAbsolutePath());
+                        hiveConf.setVar(
+                                HiveConf.ConfVars.HIVE_SERVER2_KERBEROS_PRINCIPAL, principal);
+                        hiveConf.set(
+                                DFSConfigKeys.HADOOP_SECURITY_AUTH_TO_LOCAL,
+                                "RULE:[1:$1] RULE:[2:$1]");
+                    });
+        }
 
         return hiveConf;
     }

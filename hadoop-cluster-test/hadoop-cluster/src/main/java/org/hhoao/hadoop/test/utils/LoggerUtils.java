@@ -72,6 +72,7 @@ public class LoggerUtils {
                         .withPolicy(SizeBasedTriggeringPolicy.createPolicy(size))
                         .withAppend(true)
                         .build();
+        fileAppender.start();
         loggerConfig.addAppender(
                 fileAppender,
                 Level.INFO,

@@ -27,4 +27,10 @@ public class NoCatalogHiveOptions {
             key("database").stringType().defaultValue("default").withDescription("");
     public static final ConfigOption<Map<String, String>> PROPERTIES =
             key("properties").mapType().defaultValue(new HashMap<>()).withDescription("");
+    public static final ConfigOption<String> SECURITY_KERBEROS_KRB5_CONF =
+            key("security.kerberos.krb5.conf").stringType().noDefaultValue().withDescription("");
+    public static final ConfigOption<String> SECURITY_KERBEROS_PRINCIPAL =
+            key("security.kerberos.principal").stringType().noDefaultValue().withDescription("");
+    public static final ConfigOption<String> SECURITY_KERBEROS_KEYTAB =
+            key("security.kerberos.keytab").stringType().noDefaultValue().withDescription("");
 }

@@ -1,8 +1,11 @@
 package org.hhoao.test.hive.test;
 
 import java.io.IOException;
+import java.security.PrivilegedAction;
 import java.util.concurrent.TimeUnit;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hive.beeline.BeeLine;
+import org.hhoao.hadoop.test.api.SecurityContext;
 import org.hhoao.hadoop.test.cluster.MiniHadoopClusterTestContext;
 import org.hhoao.hadoop.test.utils.LoggerUtils;
 import org.hhoao.test.hive.base.HiveTest;
@@ -20,19 +23,25 @@ public class TestBeeline extends HiveTest {
         MiniHadoopClusterTestContext miniHadoopClusterTestContext =
                 new MiniHadoopClusterTestContext();
         miniHadoopClusterTestContext.setStartHdfsOperator(false);
+        miniHadoopClusterTestContext.setEnableSecurity(true);
         return miniHadoopClusterTestContext;
     }
 
     @Test
     void test() throws IOException {
         LoggerUtils.changeAppendAllLogToFile();
-        String url = getUrl();
-        try (BeeLine beeLine = new BeeLine()) {
-            String user = System.getProperty("user.name");
-            beeLine.begin(new String[] {"-u", url, "-n", user}, System.in);
-            TimeUnit.HOURS.sleep(1);
-        } catch (InterruptedException | IOException e) {
-            throw new RuntimeException(e);
-        }
+        SecurityContext securityContext = getHadoopCluster().getSecurityContext();
+        UserGroupInformation ugi = securityContext.getDefaultUGI();
+        ugi.doAs(
+                (PrivilegedAction<?>)
+                        () -> {
+                            try (BeeLine beeLine = new BeeLine()) {
+                                beeLine.begin(new String[] {"-u", url}, System.in);
+                                TimeUnit.HOURS.sleep(1);
+                            } catch (InterruptedException | IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return null;
+                        });
     }
 }

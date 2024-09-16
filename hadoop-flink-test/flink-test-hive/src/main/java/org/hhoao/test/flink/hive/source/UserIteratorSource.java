@@ -1,4 +1,4 @@
-package org.hhoao.test.flink.hive;
+package org.hhoao.test.flink.hive.source;
 
 import org.apache.flink.streaming.api.functions.source.FromIteratorFunction;
 

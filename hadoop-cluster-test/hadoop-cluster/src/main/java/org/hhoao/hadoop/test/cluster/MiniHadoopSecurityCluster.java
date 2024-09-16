@@ -2,6 +2,8 @@ package org.hhoao.hadoop.test.cluster;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nullable;
@@ -11,6 +13,7 @@ import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.minikdc.MiniKdc;
 import org.apache.hadoop.security.ssl.KeyStoreTestUtil;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
+import org.hhoao.hadoop.test.api.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,6 +73,14 @@ public class MiniHadoopSecurityCluster extends MiniHadoopNoSecurityCluster {
         LOG.info("Test Kdc Config: {}", miniKdc.getKrb5conf());
         LOG.info("-------------------------------------------------------------------");
         kdc = miniKdc;
+    }
+
+    @Override
+    public SecurityContext getSecurityContext() {
+        Map<String, File> principalKeytabMap = new HashMap<>();
+        principalKeytabMap.put(hadoopServicePrincipal, keytabFile);
+        return new DefaultSecurityContext(
+                kdc, principalKeytabMap, hadoopServicePrincipal, keytabFile);
     }
 
     private void setupSSL(Configuration configuration) {
