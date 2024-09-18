@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.hhoao.test</groupId>
@@ -11,8 +12,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>flink-test</module>
-        <module>flink-test-1.16.2</module>
-        <module>flink-test-1.20.0</module>
         <module>flink-test-hive</module>
     </modules>
 
@@ -24,18 +23,15 @@
     <profiles>
         <profile>
             <id>flink-1.20.0</id>
-            <properties>
-                <flink.version>1.20.0</flink.version>
-            </properties>
+            <modules>
+                <module>flink-test-1.20.0</module>
+            </modules>
         </profile>
         <profile>
             <id>flink-1.16.2</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <flink.version>1.16.2</flink.version>
-            </properties>
+            <modules>
+                <module>flink-test-1.16.2</module>
+            </modules>
         </profile>
     </profiles>
 </project>

@@ -20,4 +20,13 @@
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>flink-1.20.0</id>
+        </profile>
+        <profile>
+            <id>flink-1.16.2</id>
+        </profile>
+    </profiles>
 </project>
