@@ -12,6 +12,7 @@
     <modules>
         <module>flink-test</module>
         <module>flink-test-hive</module>
+        <module>flink-test-kafka</module>
     </modules>
 
     <properties>
