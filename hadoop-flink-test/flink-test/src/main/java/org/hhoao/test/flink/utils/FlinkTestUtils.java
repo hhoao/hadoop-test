@@ -26,6 +26,16 @@ public class FlinkTestUtils {
                         orDefault, suspended ? "y" : "n", port));
     }
 
+    public static void setTaskManagerDebugProperty(
+            Configuration flinkConfig, int port, boolean suspended) {
+        String orDefault = flinkConfig.get(CoreOptions.FLINK_TM_JVM_OPTIONS);
+        flinkConfig.set(
+                CoreOptions.FLINK_TM_JVM_OPTIONS,
+                String.format(
+                        "%s -agentlib:jdwp=transport=dt_socket,server=y,suspend=%s,address=%s",
+                        orDefault, suspended ? "y" : "n", port));
+    }
+
     public static String getFlinkVersion() {
         if (flinkVersion == null) {
             String flinkCore =

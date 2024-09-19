@@ -42,6 +42,7 @@ import org.apache.flink.table.factories.DynamicTableSinkFactory;
 import org.apache.flink.table.factories.DynamicTableSourceFactory;
 import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.util.Preconditions;
+import org.apache.flink.util.StringUtils;
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.hdfs.DFSConfigKeys;
 import org.apache.hadoop.hive.conf.HiveConf;
@@ -136,7 +137,8 @@ public class NoCatalogHiveDynamicTableFactory extends FileSystemTableFactory
     }
 
     private static SecurityOperator getSecurityOperator(ReadableConfig options) {
-        if (options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL) != null) {
+        if (!StringUtils.isNullOrWhitespaceOnly(
+                options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL))) {
             String keytab = options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_KEYTAB);
             String principal = options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL);
 
@@ -167,7 +169,8 @@ public class NoCatalogHiveDynamicTableFactory extends FileSystemTableFactory
                 HiveCatalogFactoryOptions.HIVE_VERSION.key(),
                 options.get(HiveCatalogFactoryOptions.HIVE_VERSION));
 
-        if (options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL) != null) {
+        if (!StringUtils.isNullOrWhitespaceOnly(
+                options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL))) {
             String principal = options.get(NoCatalogHiveOptions.SECURITY_KERBEROS_PRINCIPAL);
             MetastoreConf.setBoolVar(hiveConf, MetastoreConf.ConfVars.USE_THRIFT_SASL, true);
             hiveConf.set(

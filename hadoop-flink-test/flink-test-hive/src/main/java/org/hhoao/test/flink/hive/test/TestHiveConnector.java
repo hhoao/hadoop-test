@@ -45,7 +45,7 @@ public class TestHiveConnector extends HiveTest {
         MiniHadoopClusterTestContext miniHadoopClusterTestContext =
                 new MiniHadoopClusterTestContext();
         miniHadoopClusterTestContext.setStartHdfsOperator(false);
-        miniHadoopClusterTestContext.setEnableSecurity(true);
+        miniHadoopClusterTestContext.setEnableSecurity(false);
         return miniHadoopClusterTestContext;
     }
 
@@ -91,7 +91,8 @@ public class TestHiveConnector extends HiveTest {
         Configuration configuration = new Configuration();
         MiniHadoopCluster hadoopCluster = getHadoopCluster();
         SecurityContext securityContext = hadoopCluster.getSecurityContext();
-        if (securityContext.isEnableSecurity()) {
+        boolean enableSecurity = securityContext.isEnableSecurity();
+        if (enableSecurity) {
             configuration.set(
                     SecurityOptions.KERBEROS_KRB5_PATH,
                     securityContext.getKdc().getKrb5conf().getAbsolutePath());
@@ -115,13 +116,14 @@ public class TestHiveConnector extends HiveTest {
                 StreamTableEnvironment.create(executionEnvironment);
         DataStreamSource<User> userDataStreamSource =
                 executionEnvironment.addSource(new UserIteratorSource());
-        hiveConf.addResource(
-                "/Users/w/sync/development/large-scale-data/hadoop/study/hadoop-test/hadoop-hive-test/hive-test/target/hive/1726242420320/hive-site.xml");
 
         String uri = MetastoreConf.getAsString(hiveConf, MetastoreConf.ConfVars.THRIFT_URIS);
-        String principal =
-                MetastoreConf.getVar(hiveConf, MetastoreConf.ConfVars.KERBEROS_PRINCIPAL);
-        String keytab = MetastoreConf.getVar(hiveConf, MetastoreConf.ConfVars.KERBEROS_KEYTAB_FILE);
+        String principal = "";
+        String keytab = "";
+        if (enableSecurity) {
+            principal = MetastoreConf.getVar(hiveConf, MetastoreConf.ConfVars.KERBEROS_PRINCIPAL);
+            keytab = MetastoreConf.getVar(hiveConf, MetastoreConf.ConfVars.KERBEROS_KEYTAB_FILE);
+        }
         streamTableEnvironment.executeSql(
                 String.format(
                         "CREATE TABLE user_test (\n"

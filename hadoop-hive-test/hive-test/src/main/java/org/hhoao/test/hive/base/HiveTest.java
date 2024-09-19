@@ -71,10 +71,7 @@ public abstract class HiveTest extends HadoopZookeeperClusterTest {
     @BeforeEach
     public void startHiveServer() throws IOException {
         SecurityContext securityContext = getHadoopCluster().getSecurityContext();
-        UserGroupInformation ugi =
-                UserGroupInformation.loginUserFromKeytabAndReturnUGI(
-                        securityContext.getDefaultPrincipal(),
-                        securityContext.getDefaultKeytab().getAbsolutePath());
+        UserGroupInformation ugi = securityContext.getDefaultUGI();
         ugi.doAs(
                 (PrivilegedAction<?>)
                         () -> {
