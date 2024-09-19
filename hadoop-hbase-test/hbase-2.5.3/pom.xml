@@ -32,40 +32,40 @@
                     <artifactId>hadoop-yarn-common</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-common</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-hdfs</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-client</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-auth</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-mapreduce-client-core</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-minicluster</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-annotations</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>hadoop-distcp</artifactId>
                     <groupId>org.apache.hadoop</groupId>
+                    <artifactId>hadoop-distcp</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -75,12 +75,12 @@
             <version>${hbase.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>hadoop-auth</artifactId>
                     <groupId>org.apache.hadoop</groupId>
+                    <artifactId>hadoop-auth</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>hadoop-common</artifactId>
                     <groupId>org.apache.hadoop</groupId>
+                    <artifactId>hadoop-common</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -94,20 +94,20 @@
                     <artifactId>hadoop-common</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-annotations</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-auth</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-hdfs</artifactId>
-                    <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>hadoop-mapreduce-client-core</artifactId>
                     <groupId>org.apache.hadoop</groupId>
+                    <artifactId>hadoop-mapreduce-client-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
