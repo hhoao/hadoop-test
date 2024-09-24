@@ -41,14 +41,8 @@ import org.apache.flink.annotation.VisibleForTesting;
 import org.apache.flink.api.common.serialization.BulkWriter;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.ReadableConfig;
-import org.apache.flink.connector.file.table.EmptyMetaStoreFactory;
-import org.apache.flink.connector.file.table.FileSystemConnectorOptions;
-import org.apache.flink.connector.file.table.FileSystemOutputFormat;
-import org.apache.flink.connector.file.table.FileSystemTableSink;
+import org.apache.flink.connector.file.table.*;
 import org.apache.flink.connector.file.table.FileSystemTableSink.TableBucketAssigner;
-import org.apache.flink.connector.file.table.PartitionCommitPolicy;
-import org.apache.flink.connector.file.table.PartitionCommitPolicyFactory;
-import org.apache.flink.connector.file.table.TableMetaStoreFactory;
 import org.apache.flink.connector.file.table.batch.BatchSink;
 import org.apache.flink.connector.file.table.batch.compact.BatchCompactOperator;
 import org.apache.flink.connector.file.table.batch.compact.BatchFileWriter;
@@ -117,6 +111,7 @@ import org.apache.thrift.TException;
 import org.hhoao.hadoop.test.security.SecurityObjectProxy;
 import org.hhoao.hadoop.test.security.SecurityObjectWithSecurityReturnObjectProxy;
 import org.hhoao.hadoop.test.security.SecurityOperator;
+import org.hhoao.hadoop.test.security.SecurityReturnObjectProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -753,7 +748,11 @@ public class HiveTableSink implements DynamicTableSink, SupportsPartitioning, Su
     }
 
     private HadoopFileSystemFactory fsFactory() {
-        return new HadoopFileSystemFactory(jobConf);
+        return (HadoopFileSystemFactory)
+                SecurityReturnObjectProxy.createInstance(
+                        securityOperator,
+                        new HadoopFileSystemFactory(jobConf),
+                        new Class[] {FileSystemFactory.class});
     }
 
     private BucketsBuilder<RowData, String, ? extends BucketsBuilder<RowData, ?, ?>>

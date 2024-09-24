@@ -68,6 +68,7 @@ public class LoggerUtils {
                         .setLayout(layout)
                         .setName("GeneratedFileAppender")
                         .withFileName(logFile.getAbsolutePath())
+                        .withFilePattern(logFile.getAbsolutePath())
                         .withPolicy(SizeBasedTriggeringPolicy.createPolicy(size))
                         .withAppend(true)
                         .build();
