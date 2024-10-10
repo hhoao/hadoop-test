@@ -62,11 +62,34 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-examples-streaming</artifactId>
             <version>${flink.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>flink-connector-kafka</artifactId>
+                    <groupId>org.apache.flink</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-table-planner_2.12</artifactId>
             <version>${flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-parser</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-core</artifactId>
+            <version>1.32.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

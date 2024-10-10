@@ -24,8 +24,8 @@ import org.apache.hadoop.hive.metastore.conf.MetastoreConf;
 import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hive.beeline.BeeLine;
 import org.hhoao.hadoop.test.utils.Resources;
-import org.hhoao.test.flink.hive.source.User;
-import org.hhoao.test.flink.hive.source.UserIteratorSource;
+import org.hhoao.test.flink.source.user.User;
+import org.hhoao.test.flink.source.user.UserIteratorSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.configuration.CheckpointingOptions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.SecurityOptions;
@@ -25,8 +26,8 @@ import org.hhoao.hadoop.test.api.SecurityContext;
 import org.hhoao.hadoop.test.cluster.MiniHadoopClusterTestContext;
 import org.hhoao.hadoop.test.utils.LoggerUtils;
 import org.hhoao.hadoop.test.utils.Resources;
-import org.hhoao.test.flink.hive.source.User;
-import org.hhoao.test.flink.hive.source.UserIteratorSource;
+import org.hhoao.test.flink.source.user.User;
+import org.hhoao.test.flink.source.user.UserSource;
 import org.hhoao.test.hive.base.HiveTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,7 +116,8 @@ public class TestHiveConnector extends HiveTest {
         StreamTableEnvironment streamTableEnvironment =
                 StreamTableEnvironment.create(executionEnvironment);
         DataStreamSource<User> userDataStreamSource =
-                executionEnvironment.addSource(new UserIteratorSource());
+                executionEnvironment.fromSource(
+                        new UserSource(), WatermarkStrategy.noWatermarks(), "user-source");
 
         String uri = MetastoreConf.getAsString(hiveConf, MetastoreConf.ConfVars.THRIFT_URIS);
         String principal = "";

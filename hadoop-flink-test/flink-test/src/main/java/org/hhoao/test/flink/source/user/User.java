@@ -1,4 +1,4 @@
-package org.hhoao.test.flink.hive.source;
+package org.hhoao.test.flink.source.user;
 
 public class User {
     private Integer id;
