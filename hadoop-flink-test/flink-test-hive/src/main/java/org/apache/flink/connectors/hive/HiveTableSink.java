@@ -460,7 +460,7 @@ public class HiveTableSink implements DynamicTableSink, SupportsPartitioning, Su
         org.apache.flink.configuration.Configuration conf =
                 new org.apache.flink.configuration.Configuration();
         catalogTable.getOptions().forEach(conf::setString);
-        HadoopFileSystemFactory fsFactory = fsFactory();
+        FileSystemFactory fsFactory = fsFactory();
         org.apache.flink.core.fs.Path tmpPath =
                 new org.apache.flink.core.fs.Path(toStagingDir(stagingParentDir, jobConf));
 
@@ -747,8 +747,8 @@ public class HiveTableSink implements DynamicTableSink, SupportsPartitioning, Su
                         new Class[] {TableMetaStoreFactory.class});
     }
 
-    private HadoopFileSystemFactory fsFactory() {
-        return (HadoopFileSystemFactory)
+    private FileSystemFactory fsFactory() {
+        return (FileSystemFactory)
                 SecurityReturnObjectProxy.createInstance(
                         securityOperator,
                         new HadoopFileSystemFactory(jobConf),

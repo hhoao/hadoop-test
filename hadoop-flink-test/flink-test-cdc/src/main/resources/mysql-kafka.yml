@@ -1,0 +1,20 @@
+source:
+  type: mysql
+  name: MySQL Source
+  hostname: ${mysql.hostname}
+  port: ${mysql.port}
+  username: ${mysql.username}
+  password: ${mysql.password}
+  tables: ${mysql.tables}
+  server-id: 5401-5404
+  server-time-zone: UTC
+
+sink:
+  type: kafka
+  name: Kafka Sink
+  topic: ${kafka.topic}
+  properties.bootstrap.servers: PLAINTEXT://${kafka.bootstrap.servers}
+
+pipeline:
+  name: MySQL to Kafka Pipeline
+  parallelism: 1

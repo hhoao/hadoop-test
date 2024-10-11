@@ -30,11 +30,11 @@ public class UserSourceReader
 
     @Override
     protected UserSplitState initializedState(UserSplit userSplit) {
-        return null;
+        return new UserSplitState();
     }
 
     @Override
     protected UserSplit toSplitType(String s, UserSplitState userSplitState) {
-        return null;
+        return userSplitState;
     }
 }
