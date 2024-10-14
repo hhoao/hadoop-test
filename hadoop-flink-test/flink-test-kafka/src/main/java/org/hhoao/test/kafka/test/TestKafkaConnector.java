@@ -5,6 +5,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.hhoao.test.kafka.base.KafkaExtension;
+import org.hhoao.test.kafka.utils.KafkaUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -26,7 +27,7 @@ public class TestKafkaConnector {
                 StreamTableEnvironment.create(executionEnvironment);
         String defaultTopic = kafkaExtension.getDefaultTopic();
         String kafkaAddress = kafkaExtension.getKafkaAddress();
-        kafkaExtension.startUserProducer();
+        KafkaUtils.asyncStartUserProducer(defaultTopic, kafkaExtension.getDefaultProducer());
         streamTableEnvironment.executeSql(
                 String.format(
                         "CREATE TABLE source (\n"

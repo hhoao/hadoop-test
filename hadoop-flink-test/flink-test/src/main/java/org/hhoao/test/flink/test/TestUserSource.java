@@ -1,5 +1,7 @@
 package org.hhoao.test.flink.test;
 
+import java.io.File;
+import java.time.Duration;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.client.program.StreamContextEnvironment;
 import org.apache.flink.configuration.CheckpointingOptions;
@@ -14,9 +16,6 @@ import org.hhoao.hadoop.test.utils.Resources;
 import org.hhoao.test.flink.source.user.User;
 import org.hhoao.test.flink.source.user.UserSource;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.time.Duration;
 
 /**
  * TestUserSource

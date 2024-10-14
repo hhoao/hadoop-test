@@ -1,19 +1,23 @@
 package org.hhoao.test.flink.test;
 
-import java.util.List;
+import java.util.HashMap;
 import org.apache.calcite.config.Lex;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.SqlNodeList;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.calcite.sql.parser.SqlParser;
 import org.apache.calcite.sql.validate.SqlConformance;
+import org.apache.flink.sql.parser.ddl.SqlCreateTable;
+import org.apache.flink.sql.parser.ddl.SqlTableOption;
 import org.apache.flink.sql.parser.validate.FlinkSqlConformance;
 import org.apache.flink.table.api.TableConfig;
+import org.apache.flink.table.factories.DynamicTableFactory;
+import org.apache.flink.table.factories.Factory;
+import org.apache.flink.table.factories.FactoryUtil;
 import org.apache.flink.table.planner.calcite.CalciteConfig;
 import org.apache.flink.table.planner.delegation.FlinkSqlParserFactories;
 import org.apache.flink.table.planner.utils.JavaScalaConversionUtil;
 import org.apache.flink.table.planner.utils.TableConfigUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * TestSqlParser
@@ -39,24 +43,43 @@ public class TestSqlParser {
                                 });
         SqlParser parser =
                 SqlParser.create(
-                        "CREATE TABLE source (\n"
-                                + "  `event_time` TIMESTAMP(3) METADATA FROM 'timestamp',\n"
-                                + "  `partition` BIGINT METADATA VIRTUAL,\n"
-                                + "  `offset` BIGINT METADATA VIRTUAL,\n"
-                                + "  `id` INT,\n"
-                                + "  `name` STRING,\n"
-                                + "  `age` INT\n"
+                        "CREATE TABLE sink (\n"
+                                + "  id INT,\n"
+                                + "  name STRING,\n"
+                                + "  age INT\n"
                                 + ") WITH (\n"
-                                + "  'connector' = 'kafka',\n"
-                                + "  'topic' = '%s',\n"
-                                + "  'properties.bootstrap.servers' = '%s',\n"
-                                + "  'properties.group.id' = '%s',\n"
-                                + "  'scan.startup.mode' = 'earliest-offset',\n"
-                                + "  'value.format' = 'json'\n"
+                                + "  'connector' = 'print'\n"
                                 + ");",
                         config);
         SqlNodeList sqlNodes = parser.parseStmtList();
-        List<@Nullable SqlNode> list = sqlNodes.getList();
-        System.out.println(list);
+        System.out.println(sqlNodes.getList());
+        HashMap<String, String> options = getOptions(sqlNodes);
+        Factory factory =
+                FactoryUtil.discoverFactory(
+                        TestSqlParser.class.getClassLoader(),
+                        Factory.class,
+                        options.get(FactoryUtil.CONNECTOR.key()));
+        if (factory instanceof DynamicTableFactory) {
+            FactoryUtil.FactoryHelper<DynamicTableFactory> factoryHelper =
+                    new FactoryUtil.FactoryHelper<>(
+                            (DynamicTableFactory) factory, options, FactoryUtil.CONNECTOR);
+            factoryHelper.validate();
+        }
+    }
+
+    private static HashMap<String, String> getOptions(SqlNodeList sqlNodes) {
+        HashMap<String, String> options = new HashMap<>();
+        for (SqlNode sqlNode : sqlNodes) {
+            if (sqlNode instanceof SqlCreateTable) {
+                SqlNodeList propertyList = ((SqlCreateTable) sqlNode).getPropertyList();
+                propertyList.forEach(
+                        node -> {
+                            options.put(
+                                    ((SqlTableOption) node).getKeyString(),
+                                    ((SqlTableOption) node).getValueString());
+                        });
+            }
+        }
+        return options;
     }
 }
