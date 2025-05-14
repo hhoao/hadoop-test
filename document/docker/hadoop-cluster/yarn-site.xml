@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!--
+配置对象: 集群资源管理系统参数
+配置 ResourceManager，NodeManager 的通信端口，web监控端口等
+-->
+<configuration>
+    <property>
+        <name>yarn.resourcemanager.ha.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.ha.rm-ids</name>
+        <value>rm1,rm2</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.hostname.rm1</name>
+        <value>172.16.238.2</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.hostname.rm2</name>
+        <value>172.16.238.3</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.webapp.address.rm1</name>
+        <value>172.16.238.2:8088</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.webapp.address.rm2</name>
+        <value>172.16.238.3:8088</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.cluster-id</name>
+        <value>yarn-rm-cluster</value>
+    </property>
+    <!--配置与zookeeper的连接地址-->
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>172.16.238.2:2181,172.16.238.3:2181,172.16.238.4:2181</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.zk-address</name>
+        <value>172.16.238.2:2181,172.16.238.3:2181,172.16.238.4:2181</value>
+        <description>For multiple zk services, separate them with comma</description>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.zk-state-store.address</name>
+        <value>172.16.238.2:2181,172.16.238.3:2181,172.16.238.4:2181</value>
+    </property>
+    <!--开启自动恢复功能-->
+    <property>
+        <name>yarn.resourcemanager.recovery.enabled</name>
+        <value>true</value>
+    </property>
+    <!-- 用于状态存储的类，默认是基于Hadoop 文件系统的实现（FileSystemStateStore）-->
+    <property>
+        <name>yarn.resourcemanager.store.class</name>
+        <value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>4800</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>512</value>
+    </property>
+
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>4800</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-vcores</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-vcores</name>
+        <value>1</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+        <description>
+            这个属性用于指定在进行mapreduce作业时，yarn使用mapreduce_shuffle混洗技术。这个混洗技术是hadoop的一个核心技术
+        </description>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+        <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+    </property>
+    <!--    是否聚合各子节点的日志信息到主节点，设置为是，不然在web上看不到日志-->
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+    <!--    日志保存时长，单位秒，默认为-1，不删除，可按需设置-->
+    <property>
+        <name>yarn.log-aggregation.retain-seconds</name>
+        <value>640800</value>
+    </property>
+    <property>
+        <name>yarn.log.server.url</name>
+        <value>http://172.16.238.2:19888/jobhistory/logs/</value>
+    </property>
+    <property>
+        <name>yarn.application.classpath</name>
+        <value>/opt/hadoop-3.3.5/etc/hadoop,/opt/hadoop-3.3.5/share/hadoop/common/lib/*,/opt/hadoop-3.3.5/share/hadoop/common/*,/opt/hadoop-3.3.5/share/hadoop/hdfs,/opt/hadoop-3.3.5/share/hadoop/hdfs/lib/*,/opt/hadoop-3.3.5/share/hadoop/hdfs/*,/opt/hadoop-3.3.5/share/hadoop/mapreduce/*,/opt/hadoop-3.3.5/share/hadoop/yarn,/opt/hadoop-3.3.5/share/hadoop/yarn/lib/*,/opt/hadoop-3.3.5/share/hadoop/yarn/*</value>
+    </property>
+</configuration>

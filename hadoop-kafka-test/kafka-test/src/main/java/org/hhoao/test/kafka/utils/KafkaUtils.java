@@ -6,10 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Properties;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -22,7 +19,11 @@ import org.apache.kafka.common.serialization.StringDeserializer;
  */
 public class KafkaUtils {
     public static Thread asyncPrintTopicRecordsInstance(
-            String type, boolean rotation, String address, String topic, Duration timeout) {
+            OffsetResetStrategy type,
+            boolean rotation,
+            String address,
+            String topic,
+            Duration timeout) {
         Thread thread =
                 new Thread(
                         () -> {
@@ -36,7 +37,8 @@ public class KafkaUtils {
                             properties.put(
                                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                                     StringDeserializer.class);
-                            properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, type);
+                            properties.put(
+                                    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, type.toString());
                             KafkaConsumer<String, String> consumer =
                                     new KafkaConsumer<>(properties);
                             consumer.subscribe(Collections.singleton(topic));
@@ -58,7 +60,7 @@ public class KafkaUtils {
         return thread;
     }
 
-    public static Thread asyncStartUserProducer(String topic, Producer producer) {
+    public static Thread asyncStartUserProducer(String topic, Producer producer, int partition) {
         Thread thread =
                 new Thread(
                         () -> {
@@ -67,7 +69,7 @@ public class KafkaUtils {
                                 ProducerRecord<String, String> producerRecord =
                                         new ProducerRecord<>(
                                                 topic,
-                                                1,
+                                                partition,
                                                 "testKey",
                                                 String.format(
                                                         "{\n"

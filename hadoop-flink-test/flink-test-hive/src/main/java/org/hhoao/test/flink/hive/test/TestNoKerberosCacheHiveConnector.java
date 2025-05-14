@@ -25,7 +25,7 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.apache.hive.beeline.BeeLine;
 import org.hhoao.hadoop.test.utils.Resources;
 import org.hhoao.test.flink.source.user.User;
-import org.hhoao.test.flink.source.user.UserIteratorSource;
+import org.hhoao.test.flink.source.user.UserIteratorFunction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -109,7 +109,7 @@ public class TestNoKerberosCacheHiveConnector {
         StreamTableEnvironment streamTableEnvironment =
                 StreamTableEnvironment.create(executionEnvironment);
         DataStreamSource<User> userDataStreamSource =
-                executionEnvironment.addSource(new UserIteratorSource());
+                executionEnvironment.addSource(new UserIteratorFunction());
 
         String uri = MetastoreConf.getAsString(hiveConf, MetastoreConf.ConfVars.THRIFT_URIS);
         String principal =

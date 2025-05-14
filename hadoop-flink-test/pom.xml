@@ -15,6 +15,9 @@
         <module>flink-test-kafka</module>
         <module>flink-test-cdc</module>
         <module>flink-test-es</module>
+        <module>flink-example</module>
+        <module>flink-test-jdbc-connector</module>
+        <module>flink-test-clickhouse</module>
     </modules>
 
     <properties>

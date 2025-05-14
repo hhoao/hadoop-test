@@ -5,14 +5,14 @@
        <name>hive.strict.managed.tables</name>
        <value>false</value>
 </property>
-<property>
+    <property>
        <name>hive.create.as.insert.only</name>
        <value>true</value>
 </property>
 <property>
        <name>metastore.create.as.acid</name>
        <value>true</value>
-</property>   
+</property>
 <property>
        <name>javax.jdo.option.ConnectionURL</name>
        <value>jdbc:mysql://172.16.21.107:3306/metastore?createDatabaseIfNotExist=true&amp;useSSL=false&amp;autoReconnect=true</value>
@@ -330,9 +330,9 @@
 
     <!-- hive开启kerberos -->
 
-    
+
 
        <!-- hive单独开启Ldap -->
 
-    
+
 </configuration>

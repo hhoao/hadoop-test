@@ -18,6 +18,7 @@ import org.apache.flink.cdc.composer.PipelineExecution;
 import org.apache.flink.cdc.composer.definition.PipelineDef;
 import org.apache.flink.cdc.composer.flink.FlinkPipelineComposer;
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings;
+import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.hhoao.hadoop.test.utils.Resources;
 import org.hhoao.test.common.extension.MysqlContainerExtension;
 import org.hhoao.test.kafka.base.KafkaExtension;
@@ -73,10 +74,10 @@ public class TestMysqlKafkaCDCByDocker {
         int internal = 2;
         mysqlUserProducerThread =
                 mysqlContainerExtension.asyncInsertUserData(
-                        Integer.MAX_VALUE, TimeUnit.SECONDS, internal);
+                        Integer.MAX_VALUE, TimeUnit.MILLISECONDS, 10);
         kafkaConsumerThread =
                 KafkaUtils.asyncPrintTopicRecordsInstance(
-                        "latest",
+                        OffsetResetStrategy.LATEST,
                         true,
                         kafkaExtension.getKafkaAddress(),
                         kafkaExtension.getDefaultTopic(),

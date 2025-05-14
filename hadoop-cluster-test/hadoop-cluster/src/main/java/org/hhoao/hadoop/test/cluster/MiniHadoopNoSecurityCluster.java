@@ -133,12 +133,16 @@ public class MiniHadoopNoSecurityCluster implements MiniHadoopCluster {
                     try {
                         baseDir.mkdirs();
                         configDir.mkdirs();
-                        String hadoopNativeDir = getHadoopNativeDir();
-                        ClassLoaderUtils.addLibraryDir(hadoopNativeDir);
-                        LOG.info(
-                                "Add library dir: {} end, native code loaded: {}",
-                                hadoopNativeDir,
-                                NativeCodeLoader.isNativeCodeLoaded());
+                        try {
+                            String hadoopNativeDir = getHadoopNativeDir();
+                            ClassLoaderUtils.addLibraryDir(hadoopNativeDir);
+                            LOG.info(
+                                    "Add library dir: {} end, native code loaded: {}",
+                                    hadoopNativeDir,
+                                    NativeCodeLoader.isNativeCodeLoaded());
+                        } catch (Exception e) {
+                            LOG.warn("Hadoop native library not loaded", e);
+                        }
                         config = getCommonConfiguration(customConfiguration, yarnClasspath);
                         UserGroupInformation.setConfiguration(config);
 

@@ -1,0 +1,120 @@
+<!--
+配置对象: HDFS参数
+如名称节点和数据节点的存放位置、文件
+副本的个数、文件读取权限等
+-->
+<configuration>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/data/hadoop_admin</value>
+    </property>
+<!--    namenode存储表信息的路径-->
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:/data/hadoop/hdfs/name</value>
+    </property>
+<!--    datanode存储实际文件数据块的路径-->
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:/data/hadoop/hdfs/data</value>
+    </property>
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>172.16.238.2:2181,172.16.238.3:2181,172.16.238.4:2181</value>
+    </property>
+
+    <property>
+        <name>dfs.nameservices</name>
+        <value>ns1</value>
+    </property>
+    <property>
+        <name>dfs.ha.namenodes.ns1</name>
+        <value>nn1,nn2</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled.ns1</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.ns1.nn1</name>
+        <value>172.16.238.2:9000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.ns1.nn2</name>
+        <value>172.16.238.3:9000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.ns1.nn1</name>
+        <value>172.16.238.2:60070</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.ns1.nn2</name>
+        <value>172.16.238.3:60070</value>
+    </property>
+<!--    文件副本个数，不超过datanode的个数-->
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+<!--    dfs.namenode.secondary.http-address：secondary namenode服务网址，端口号默认为9868，可按需修改-->
+    <property>
+        <name>dfs.client.failover.proxy.provider.ns1</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+        <description>指定客户端用于HA切换的代理类，不同的NS可以用不同的代理类
+            以上示例为Hadoop 2.0自带的缺省代理类</description>
+    </property>
+
+    <property>
+        <name>dfs.journalnode.rpc-address</name>
+        <value>0.0.0.0:8485</value>
+    </property>
+
+    <property>
+        <name>dfs.journalnode.http-address</name>
+        <value>0.0.0.0:18480</value>
+    </property>
+
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>0.0.0.0:60075</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>0.0.0.0:50010</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>0.0.0.0:50020</value>
+    </property>
+
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/data/hadoop/hdfs/journal</value>
+    </property>
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://172.16.238.2:8485;172.16.238.3:8485;172.16.238.4:8485/namenode-ha-data</value>
+    </property>
+    <property>
+        <name>dfs.client.failover.proxy.provider.ns1</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+        <description>指定客户端用于HA切换的代理类，不同的NS可以用不同的代理类
+            以上示例为Hadoop 2.0自带的缺省代理类</description>
+    </property>
+    <property>
+        <name>dfs.namenode.edits.journal-plugin.qjournal</name>
+        <value>org.apache.hadoop.hdfs.qjournal.client.QuorumJournalManager</value>
+    </property>
+
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>sshfence</value>
+    </property>
+    <property>
+        <name>dfs.permissions</name>
+        <value>false</value>
+    </property>
+</configuration>
+<!--
+
+-->

@@ -14,6 +14,7 @@
         <module>hadoop-spark-test</module>
         <module>hadoop-kafka-test</module>
         <module>hadoop-test-common</module>
+        <module>hadoop-zookeeper-test</module>
     </modules>
 
     <properties>
@@ -118,15 +119,15 @@
         <!-- hadoop -->
         <profile>
             <id>hadoop-2.7.3</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <hadoop.version>${hadoop-2.7.3}</hadoop.version>
             </properties>
         </profile>
         <profile>
             <id>hadoop-3.3.6</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <hadoop.version>${hadoop-3.3.6}</hadoop.version>
             </properties>
@@ -135,15 +136,15 @@
         <!-- flink -->
         <profile>
             <id>flink-1.20.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <flink.version>1.20.0</flink.version>
             </properties>
         </profile>
         <profile>
             <id>flink-1.16.2</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <flink.version>1.16.2</flink.version>
             </properties>

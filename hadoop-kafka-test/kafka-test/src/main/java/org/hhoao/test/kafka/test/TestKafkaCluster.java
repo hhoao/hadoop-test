@@ -1,6 +1,7 @@
 package org.hhoao.test.kafka.test;
 
 import java.time.Duration;
+import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.hhoao.test.kafka.base.KafkaExtension;
 import org.hhoao.test.kafka.utils.KafkaUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -22,10 +23,10 @@ public class TestKafkaCluster {
     public void getTopicLatestRecordsInstance() {
         asyncStartUserProducerThread =
                 KafkaUtils.asyncStartUserProducer(
-                        kafkaExtension.getDefaultTopic(), kafkaExtension.getDefaultProducer());
+                        kafkaExtension.getDefaultTopic(), kafkaExtension.getDefaultProducer(), 0);
         asyncPrintTopicRecordsInstanceThread =
                 KafkaUtils.asyncPrintTopicRecordsInstance(
-                        "latest",
+                        OffsetResetStrategy.LATEST,
                         true,
                         kafkaExtension.getKafkaAddress(),
                         kafkaExtension.getDefaultTopic(),

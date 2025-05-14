@@ -12,6 +12,7 @@ import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.configuration.CheckpointingOptions;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.CoreOptions;
+import org.apache.flink.configuration.TaskManagerOptions;
 import org.apache.flink.runtime.client.JobStatusMessage;
 import org.apache.flink.streaming.api.environment.ExecutionCheckpointingOptions;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class TestApplication extends ApplicationTestBase {
     @Override
     protected File getFlinkRootDirt() {
-        return new File("/Users/w/applications");
+        return new File(System.getProperty("user.home") + "/applications");
     }
 
     @Override
@@ -57,7 +58,7 @@ public class TestApplication extends ApplicationTestBase {
     }
 
     @Test
-    public void test() throws Throwable {
+    public void testCheckpoint() throws Throwable {
         Tuple2<List<String>, String> defaultPipelineJarsPathsAndMainClass =
                 FlinkTestUtils.getDefaultPipelineJarsPathsAndMainClass();
         int count = 1;
@@ -72,7 +73,8 @@ public class TestApplication extends ApplicationTestBase {
                             defaultPipelineJarsPathsAndMainClass.f0);
             Configuration configuration = new Configuration();
             configuration.set(ApplicationConfiguration.APPLICATION_ARGS, new ArrayList<>());
-            configuration.set(CoreOptions.DEFAULT_PARALLELISM, 2);
+            configuration.set(CoreOptions.DEFAULT_PARALLELISM, 4);
+            configuration.set(TaskManagerOptions.NUM_TASK_SLOTS, 1);
             configuration.set(
                     ApplicationConfiguration.APPLICATION_MAIN_CLASS,
                     defaultPipelineJarsPathsAndMainClass.f1);
@@ -87,7 +89,46 @@ public class TestApplication extends ApplicationTestBase {
             configuration.set(
                     CheckpointingOptions.SAVEPOINT_DIRECTORY,
                     Path.mergePaths(homeDirectory, new Path("/savepoints")).toString());
-            FlinkTestUtils.setJobManagerDebugProperty(configuration, 31231, false);
+            FlinkTestUtils.setJobManagerDebugProperty(configuration, 31231, true);
+            yarnFlinkTest.start(
+                    getHadoopCluster().getConfig(),
+                    configuration,
+                    YarnDeploymentTarget.APPLICATION);
+            yarnFlinkTests.add(yarnFlinkTest);
+        }
+        YarnFlinkTest yarnFlinkTest = yarnFlinkTests.get(0);
+        ClusterClient<ApplicationId> clusterClient = yarnFlinkTest.getClusterClient();
+        Collection<JobStatusMessage> jobStatusMessages = clusterClient.listJobs().get();
+        TimeUnit.SECONDS.sleep(5);
+        for (JobStatusMessage jobStatusMessage : jobStatusMessages) {
+            JobID jobId = jobStatusMessage.getJobId();
+            yarnFlinkTest.getClusterClient().cancel(jobId);
+        }
+
+        TimeUnit.HOURS.sleep(2);
+    }
+
+    @Test
+    public void testCancelJob() throws Throwable {
+        Tuple2<List<String>, String> defaultPipelineJarsPathsAndMainClass =
+                FlinkTestUtils.getDefaultPipelineJarsPathsAndMainClass();
+        int count = 1;
+        ArrayList<YarnFlinkTest> yarnFlinkTests = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            List<String> flinkLibDirs = new ArrayList<>();
+            flinkLibDirs.add(flinkLibPath.getAbsolutePath());
+            YarnFlinkTest yarnFlinkTest =
+                    new YarnFlinkTest(
+                            flinkLibDirs,
+                            flinkDistPath.getAbsolutePath(),
+                            defaultPipelineJarsPathsAndMainClass.f0);
+            Configuration configuration = new Configuration();
+            configuration.set(ApplicationConfiguration.APPLICATION_ARGS, new ArrayList<>());
+            configuration.set(CoreOptions.DEFAULT_PARALLELISM, 4);
+            configuration.set(TaskManagerOptions.NUM_TASK_SLOTS, 1);
+            configuration.set(
+                    ApplicationConfiguration.APPLICATION_MAIN_CLASS,
+                    defaultPipelineJarsPathsAndMainClass.f1);
             yarnFlinkTest.start(
                     getHadoopCluster().getConfig(),
                     configuration,

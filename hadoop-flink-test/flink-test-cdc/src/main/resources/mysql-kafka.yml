@@ -8,6 +8,9 @@ source:
   tables: ${mysql.tables}
   server-id: 5401-5404
   server-time-zone: UTC
+  scan.incremental.snapshot.enabled: true
+  scan.incremental.snapshot.chunk.size: 20
+  scan.snapshot.fetch.size: 20
 
 sink:
   type: kafka
